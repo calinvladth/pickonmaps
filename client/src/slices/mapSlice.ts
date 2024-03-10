@@ -6,6 +6,7 @@ export interface PickState {
     id?: string
     category: string,
     name: string,
+    text: string,
     position: { lat: number, lng: number }
 }
 
@@ -31,7 +32,8 @@ const initialState: MapState = {
     pick: {
         category: '',
         name: '',
-        position: {lat: 0, lng: 0}
+        position: {lat: 0, lng: 0},
+        text: ''
     }
 }
 
@@ -73,8 +75,10 @@ export const mapSlice = createSlice({
     initialState,
     reducers: {
         onMapMove: (state, action) => {
-            state.position = action.payload
-            state.pick.position = action.payload
+            if (!state.isEdit && !state.isPickView) {
+                state.position = action.payload
+                state.pick.position = action.payload
+            }
         },
         onEdit: (state) => {
             if (!state.pick.position.lat && !state.pick.position.lng) {

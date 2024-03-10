@@ -18,10 +18,6 @@ function App() {
             <Row gutter={24}>
 
                 <Col span={8}>
-                    {/*<LayerCategoryList/>*/}
-                    {/*<PickerForm/>*/}
-                    {/*<PickView/>*/}
-                    {/*<UserProfile/>*/}
                     {isPickView && <PickerView/>}
                     {isEdit ? <MapForm/> : <MapListPicks/>}
 

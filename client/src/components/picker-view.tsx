@@ -1,7 +1,8 @@
-import {Button, message, Popconfirm, Typography} from "antd";
+import {Button, Popconfirm, Typography} from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import {mapActions, onEdit, selectMap} from "../slices/mapSlice";
 import {useState} from "react";
+import parse from 'html-react-parser';
 
 function PickerView() {
     const dispatch = useDispatch()
@@ -24,6 +25,8 @@ function PickerView() {
         <p>
             {pick.name}
         </p>
+
+            {parse(pick.text)}
 
         <Button type="primary" onClick={handleEdit}>Edit</Button>
         <Popconfirm
