@@ -1,9 +1,6 @@
-import {useEffect, useState} from "react";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './editor.css'
-import {useDispatch, useSelector} from "react-redux";
-import {onPickEdit, selectMap} from "../../slices/mapSlice";
 
 const modules = {
     toolbar: [
@@ -21,11 +18,12 @@ const formats = [
     'link', 'image'
 ]
 
-function TextEditor() {
-    const {pick} = useSelector(selectMap)
-    const dispatch = useDispatch()
+interface TextEditorInterface {
+    onChange: () => void
+}
 
-    return <ReactQuill theme="snow" value={pick.text} onChange={(data) => dispatch(onPickEdit({text: data}))} formats={formats} modules={modules}/>
+function TextEditor({text, onChange}: TextEditorInterface) {
+    return <ReactQuill theme="snow" value={text} onChange={onChange} formats={formats} modules={modules}/>
 }
 
 export default TextEditor

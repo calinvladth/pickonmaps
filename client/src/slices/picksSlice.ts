@@ -7,10 +7,11 @@ export interface PickState {
     category: string,
     name: string,
     text: string,
-    position: { lat: number, lng: number }
+    lat?: number,
+    lng?: number
 }
 
-export interface MapState {
+export interface PicksState {
     isLoading: boolean,
     isSaveLoading: boolean
     isDeleteLoading: boolean,
@@ -21,7 +22,7 @@ export interface MapState {
     pick: PickState
 }
 
-const initialState: MapState = {
+const initialState: PicksState = {
     isLoading: false,
     isSaveLoading: false,
     isDeleteLoading: false,
@@ -32,7 +33,8 @@ const initialState: MapState = {
     pick: {
         category: '',
         name: '',
-        position: {lat: 0, lng: 0},
+        lat: 0,
+        lng: 0,
         text: ''
     }
 }
@@ -70,30 +72,23 @@ export const deletePick = createAsyncThunk('map/deletePick', async ({
 })
 
 
-export const mapSlice = createSlice({
+export const picksSlice = createSlice({
     name: 'map',
     initialState,
     reducers: {
         onMapMove: (state, action) => {
-            if (!state.isEdit && !state.isPickView) {
-                state.position = action.payload
-                state.pick.position = action.payload
+            if (!state.isEdit && !state.isPickView && !state.pick.id) {
+                state.pick.lat = action.payload?.lat
+                state.pick.lng = action.payload?.lng
             }
         },
         onEdit: (state) => {
-            if (!state.pick.position.lat && !state.pick.position.lng) {
-                state.pick.position = state.position
+            if (!state.pick.lat && !state.pick.lng) {
+                state.pick.lat = state.position?.lat
+                state.pick.lng = state.position?.lng
             }
             state.isEdit = !state.isEdit
             state.isPickView = false
-        },
-        onCloseAddEdit: (state) => {
-            state.isEdit = false
-            state.isPickView = false
-            delete state.pick.id
-            state.pick.category = ''
-            state.pick.name = ''
-            state.pick.position = {lat: 0, lng: 0}
         },
         onPickSelect: (state, action) => {
             state.isPickView = true
@@ -111,17 +106,23 @@ export const mapSlice = createSlice({
             .addCase(getPicks.pending, (state) => {
                 state.isLoading = true
             })
-            .addCase(getPicks.fulfilled, (state, action) => {
-                state.picks = action.payload
+            .addCase(getPicks.fulfilled, (state, {payload}) => {
+                state.picks = payload
                 state.isLoading = false
+                if (!state.pick.id) {
+                    state.pick = state.picks[0]
+                }
+                console.log('SSS: ', state.pick)
             })
 
         builder
             .addCase(savePick.fulfilled, (state) => {
-                delete state.pick.id
-                state.pick.category = ''
-                state.pick.name = ''
-                state.pick.position = {lat: 0, lng: 0}
+                // delete state.pick.id
+                // state.pick.category = ''
+                // state.pick.name = ''
+                // state.pick.lat = 0
+                // state.pick.lng = 0
+
                 state.isEdit = false
                 state.isPickView = false
                 state.isSaveLoading = false
@@ -137,7 +138,8 @@ export const mapSlice = createSlice({
                 delete state.pick.id
                 state.pick.category = ''
                 state.pick.name = ''
-                state.pick.position = {lat: 0, lng: 0}
+                state.pick.lat = 0
+                state.pick.lng = 0
                 state.isPickView = false
                 state.isDeleteLoading = false
             })
@@ -148,11 +150,11 @@ export const mapSlice = createSlice({
     }
 })
 
-export const {onMapMove, onCloseAddEdit, onEdit, onPickSelect, onPickEdit} = mapSlice.actions
+export const {onMapMove, onEdit, onPickSelect, onPickEdit} = picksSlice.actions
 
-export const selectMap = (state: { map: MapState }) => state.map
+export const selectPicks = (state: { picks: PicksState }) => state.picks
 
-export const mapActions = {
+export const picksActions = {
     getPicks,
     createPick,
     editPick,
@@ -160,4 +162,4 @@ export const mapActions = {
     deletePick
 }
 
-export default mapSlice.reducer
+export default picksSlice.reducer

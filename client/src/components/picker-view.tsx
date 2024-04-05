@@ -1,48 +1,61 @@
-import {Button, Popconfirm, Typography} from "antd";
+import {Button, Card, Popconfirm, Space, Typography} from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import {mapActions, onEdit, selectMap} from "../slices/mapSlice";
+import {picksActions, onEdit, selectPicks} from "../slices/picksSlice";
 import {useState} from "react";
 import parse from 'html-react-parser';
+import {AimOutlined, CheckOutlined, DeleteOutlined, EditOutlined} from "@ant-design/icons";
+import {COLORS, EVENT_CHANNELS, ICON_SIZE} from "../utils/constants";
 
 function PickerView() {
     const dispatch = useDispatch()
-    const {isDeleteLoading, isEdit, pick} = useSelector(selectMap)
+    const {isEdit, isDeleteLoading, pick} = useSelector(selectPicks)
     const [open, setOpen] = useState(false)
+    const channel = new BroadcastChannel(EVENT_CHANNELS.PICK_MODAL_EDIT)
+
+    function handleLocationChange() {
+        dispatch(onEdit())
+    }
+
+    function handleLocationSave() {
+        dispatch(picksActions.savePick(pick))
+    }
 
     function handleEdit() {
-        dispatch(onEdit(!isEdit))
+        channel.postMessage({isOpen: true})
     }
 
     function handleDelete() {
-        dispatch(mapActions.deletePick({pick, cb: () => setOpen(false)}))
+        dispatch(picksActions.deletePick({pick, cb: () => setOpen(false)}))
     }
 
-    return <>
-        <Typography.Title level={1}>Picker view</Typography.Title>
-        <p>
-            {pick.category}
-        </p>
-        <p>
-            {pick.name}
-        </p>
+    return <Card title={`${pick.name}`} extra={
+        <Space>
+            {
+                isEdit ? <CheckOutlined onClick={handleLocationSave}/> : <AimOutlined style={{fontSize: ICON_SIZE.SM, color: COLORS.BLUE}} onClick={handleLocationChange}/>
+            }
 
-            {parse(pick.text)}
+            <EditOutlined style={{fontSize: ICON_SIZE.SM, color: COLORS.ORANGE}} onClick={handleEdit}/>
+            <Popconfirm
+                title="Delete the task"
+                description="Are you sure to delete this task?"
+                okButtonProps={{loading: isDeleteLoading}}
+                onConfirm={handleDelete}
+                onCancel={() => setOpen(false)}
+                okText="Yes"
+                cancelText="No"
+                open={open}
+            >
+                <DeleteOutlined style={{fontSize: ICON_SIZE.SM, color: COLORS.RED}} onClick={() => setOpen(true)}/>
+            </Popconfirm>
+        </Space>
 
-        <Button type="primary" onClick={handleEdit}>Edit</Button>
-        <Popconfirm
-            title="Delete the task"
-            description="Are you sure to delete this task?"
-            okButtonProps={{ loading: isDeleteLoading }}
-            onConfirm={handleDelete}
-            onCancel={() => setOpen(false)}
-            okText="Yes"
-            cancelText="No"
-            open={open}
-        >
-            <Button danger onClick={() => setOpen(true)}>Delete</Button>
-        </Popconfirm>
+    } style={{width: '100%'}}>
+        {parse(pick.text || '')}
 
-    </>
+        <hr/>
+        {pick.category}
+
+    </Card>
 }
 
 export default PickerView

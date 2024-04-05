@@ -1,4 +1,9 @@
-.ql-editor {
-    border: 1px solid red;
+
+.ql-toolbar {
+    border-radius: 6px 6px 0 0;
+}
+
+.ql-container {
     height: 300px;
+    border-radius: 0 0 6px 6px;
 }

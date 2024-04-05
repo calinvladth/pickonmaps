@@ -7,7 +7,7 @@ function MapPickClicked() {
 
     useEffect(() => {
         channel.addEventListener('message', event => {
-            map.setView({lat: event.data[0], lng: event.data[1]}, map.getZoom(), {animate: true})
+            map.setView({lat: event.data.lat, lng: event.data.lng}, map.getZoom(), {animate: true})
         })
     }, [])
 

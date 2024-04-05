@@ -1,7 +1,7 @@
 import {useCallback, useEffect} from "react";
 import {useMap} from "react-leaflet";
 import {useDispatch} from "react-redux";
-import {onMapMove} from "../slices/mapSlice";
+import {onMapMove} from "../slices/picksSlice";
 
 function MapGetCenter() {
     const dispatch = useDispatch()
