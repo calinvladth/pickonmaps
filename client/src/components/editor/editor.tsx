@@ -19,7 +19,8 @@ const formats = [
 ]
 
 interface TextEditorInterface {
-    onChange: () => void
+    text: string,
+    onChange: (data: string) => void
 }
 
 function TextEditor({text, onChange}: TextEditorInterface) {

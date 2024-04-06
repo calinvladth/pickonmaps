@@ -1,12 +1,14 @@
 import {useDispatch, useSelector} from "react-redux";
-import {onPickEdit, selectPicks} from "../../slices/picksSlice";
 import {useMemo, useRef} from "react";
 import {Marker} from "react-leaflet";
+import {onMarkerDrag, selectGeneral} from "../../slices/generalSlice";
 
-function MovingMarker() {
+
+function MarkerDrag() {
     const dispatch = useDispatch()
-    const {pick} = useSelector(selectPicks)
+    const {markerPosition} = useSelector(selectGeneral)
     const markerRef = useRef(null)
+
 
     const eventHandlers = useMemo(
         () => ({
@@ -14,7 +16,7 @@ function MovingMarker() {
                 const marker = markerRef.current
                 if (marker != null) {
                     const {lat, lng} = marker.getLatLng()
-                    dispatch(onPickEdit({lat, lng}))
+                    dispatch(onMarkerDrag({lat, lng}))
                 }
             },
         }),
@@ -25,9 +27,9 @@ function MovingMarker() {
     return <Marker
         draggable={true}
         eventHandlers={eventHandlers}
-        position={{lat: pick.lat, lng: pick.lng}}
+        position={{lat: markerPosition.lat as number, lng: markerPosition.lng as number}}
         ref={markerRef}>
     </Marker>
 }
 
-export default MovingMarker
+export default MarkerDrag

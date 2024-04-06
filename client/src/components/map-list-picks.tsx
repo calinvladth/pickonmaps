@@ -10,7 +10,7 @@ const {Title, Text} = Typography
 function MapListPicks() {
     const dispatch = useDispatch()
     const {picks} = useSelector(selectPicks)
-    const channel = new BroadcastChannel('mapListPickClicked')
+    const channel = new BroadcastChannel(EVENT_CHANNELS.MOVE_TO_PICK)
 
     const createPickChannel = new BroadcastChannel(EVENT_CHANNELS.PICK_MODAL_CREATE)
 

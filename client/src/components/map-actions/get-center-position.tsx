@@ -1,13 +1,17 @@
 import {useCallback, useEffect} from "react";
 import {useMap} from "react-leaflet";
 import {useDispatch} from "react-redux";
-import {onMapMove} from "../slices/picksSlice";
+import {onMapMove} from "../../slices/generalSlice";
 
-function MapGetCenter() {
+function GetCenterPosition() {
     const dispatch = useDispatch()
     const map = useMap()
 
     const onMove = useCallback(() => {
+        dispatch(onMapMove(map.getCenter()))
+    }, [map])
+
+    useEffect(() => {
         dispatch(onMapMove(map.getCenter()))
     }, [map])
 
@@ -21,4 +25,4 @@ function MapGetCenter() {
     return null
 }
 
-export default MapGetCenter
+export default GetCenterPosition

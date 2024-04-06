@@ -13,10 +13,10 @@ export interface PickState {
 
 export interface PicksState {
     isLoading: boolean,
+    isLoadingPick: boolean,
     isSaveLoading: boolean
     isDeleteLoading: boolean,
-    isEdit: boolean,
-    isPickView: boolean,
+    isPickEdit: boolean,
     position: { lat: number, lng: number },
     picks: PickState[],
     pick: PickState
@@ -24,10 +24,10 @@ export interface PicksState {
 
 const initialState: PicksState = {
     isLoading: false,
+    isLoadingPick: false,
     isSaveLoading: false,
     isDeleteLoading: false,
-    isEdit: false,
-    isPickView: false,
+    isPickEdit: false,
     position: {lat: 44.43996963311098, lng: 26.09257221221924},
     picks: [],
     pick: {
@@ -39,34 +39,35 @@ const initialState: PicksState = {
     }
 }
 
-export const getPicks = createAsyncThunk('map/getPicks', async () => {
-    return await picksApi.getPicks()
+
+export const getPick = createAsyncThunk('map/getPick', async ({mapId, pickId}: { mapId: string, pickId: string }) => {
+    return await picksApi.getPick({mapId, pickId})
 })
 
-export const createPick = createAsyncThunk('map/createPick', async (pick: PickState, {dispatch}) => {
-    await picksApi.createPick(pick)
-    dispatch(getPicks())
+export const getPicks = createAsyncThunk('map/getPicks', async (mapId: string) => {
+    return await picksApi.getPicks(mapId)
 })
 
-export const editPick = createAsyncThunk('map/editPick', async (pick: PickState, {dispatch}) => {
-    await picksApi.editPick(pick)
-    dispatch(getPicks())
-})
-
-export const savePick = createAsyncThunk('map/createPick', async (pick: PickState, {dispatch}) => {
-    pick.id ? await picksApi.editPick(pick) : await picksApi.createPick(pick)
-    dispatch(getPicks())
+export const savePick = createAsyncThunk('map/savePick', async ({
+                                                                    pick,
+                                                                    mapId,
+                                                                    cb
+                                                                }: { pick: PickState, mapId: string, cb: () => void }, {dispatch}) => {
+    pick.id ? await picksApi.editPick({pick, mapId}) : await picksApi.createPick({pick, mapId})
+    dispatch(getPicks(mapId))
+    cb()
 
     message.success(pick.id ? "Pick edited successfully" : "Pick created successfully")
 })
 
 export const deletePick = createAsyncThunk('map/deletePick', async ({
                                                                         pick,
+                                                                        mapId,
                                                                         cb
-                                                                    }: { pick: PickState, cb: () => void }, {dispatch}) => {
-    await picksApi.deletePick(pick)
+                                                                    }: { pick: PickState, mapId: string, cb: () => void }, {dispatch}) => {
+    await picksApi.deletePick({pick, mapId})
     cb()
-    dispatch(getPicks())
+    dispatch(getPicks(mapId))
 
     message.success("Pick removed successfully")
 })
@@ -77,21 +78,29 @@ export const picksSlice = createSlice({
     initialState,
     reducers: {
         onMapMove: (state, action) => {
-            if (!state.isEdit && !state.isPickView && !state.pick.id) {
-                state.pick.lat = action.payload?.lat
-                state.pick.lng = action.payload?.lng
+            if (!state.isPickEdit && !state.pick.id) {
+                state.position.lat = action.payload?.lat
+                state.position.lng = action.payload?.lng
             }
         },
-        onEdit: (state) => {
+        onEdit: (state, action) => {
+            state.isPickEdit = action.payload
+
             if (!state.pick.lat && !state.pick.lng) {
                 state.pick.lat = state.position?.lat
                 state.pick.lng = state.position?.lng
             }
-            state.isEdit = !state.isEdit
-            state.isPickView = false
+
+            if (!action.payload) {
+                delete state.pick.id
+                state.pick.category = ''
+                state.pick.name = ''
+                state.pick.text = ''
+                state.pick.lat = 0
+                state.pick.lng = 0
+            }
         },
         onPickSelect: (state, action) => {
-            state.isPickView = true
             state.pick = action.payload
         },
         onPickEdit: (state, action) => {
@@ -103,28 +112,26 @@ export const picksSlice = createSlice({
     },
     extraReducers: builder => {
         builder
+            .addCase(getPick.pending, (state) => {
+                state.isLoadingPick = true
+            })
+            .addCase(getPick.fulfilled, (state, {payload}) => {
+                state.pick = payload
+                state.isLoadingPick = false
+            })
+
+        builder
             .addCase(getPicks.pending, (state) => {
                 state.isLoading = true
             })
             .addCase(getPicks.fulfilled, (state, {payload}) => {
                 state.picks = payload
                 state.isLoading = false
-                if (!state.pick.id) {
-                    state.pick = state.picks[0]
-                }
-                console.log('SSS: ', state.pick)
             })
 
         builder
             .addCase(savePick.fulfilled, (state) => {
-                // delete state.pick.id
-                // state.pick.category = ''
-                // state.pick.name = ''
-                // state.pick.lat = 0
-                // state.pick.lng = 0
-
-                state.isEdit = false
-                state.isPickView = false
+                state.isPickEdit = false
                 state.isSaveLoading = false
             })
 
@@ -140,7 +147,6 @@ export const picksSlice = createSlice({
                 state.pick.name = ''
                 state.pick.lat = 0
                 state.pick.lng = 0
-                state.isPickView = false
                 state.isDeleteLoading = false
             })
             .addCase(deletePick.pending, (state) => {
@@ -155,9 +161,8 @@ export const {onMapMove, onEdit, onPickSelect, onPickEdit} = picksSlice.actions
 export const selectPicks = (state: { picks: PicksState }) => state.picks
 
 export const picksActions = {
+    getPick,
     getPicks,
-    createPick,
-    editPick,
     savePick,
     deletePick
 }

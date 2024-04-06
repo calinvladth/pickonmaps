@@ -4,8 +4,8 @@ import PickCreate from "./pick-create";
 
 function Modals() {
     return <>
-        <PickCreate/>
-        <PickEdit/>
+        {/*<PickCreate/>*/}
+        {/*<PickEdit/>*/}
     </>
 }
 

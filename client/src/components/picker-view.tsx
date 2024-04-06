@@ -8,7 +8,7 @@ import {COLORS, EVENT_CHANNELS, ICON_SIZE} from "../utils/constants";
 
 function PickerView() {
     const dispatch = useDispatch()
-    const {isEdit, isDeleteLoading, pick} = useSelector(selectPicks)
+    const {isPickEdit, isDeleteLoading, pick} = useSelector(selectPicks)
     const [open, setOpen] = useState(false)
     const channel = new BroadcastChannel(EVENT_CHANNELS.PICK_MODAL_EDIT)
 
@@ -31,7 +31,7 @@ function PickerView() {
     return <Card title={`${pick.name}`} extra={
         <Space>
             {
-                isEdit ? <CheckOutlined onClick={handleLocationSave}/> : <AimOutlined style={{fontSize: ICON_SIZE.SM, color: COLORS.BLUE}} onClick={handleLocationChange}/>
+                isPickEdit ? <CheckOutlined onClick={handleLocationSave}/> : <AimOutlined style={{fontSize: ICON_SIZE.SM, color: COLORS.BLUE}} onClick={handleLocationChange}/>
             }
 
             <EditOutlined style={{fontSize: ICON_SIZE.SM, color: COLORS.ORANGE}} onClick={handleEdit}/>
