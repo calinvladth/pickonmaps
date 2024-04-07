@@ -16,9 +16,9 @@ function GetCenterPosition() {
     }, [map])
 
     useEffect(() => {
-        map.on('moveend', onMove)
+        map.on('dragend', onMove)
         return () => {
-            map.off('moveend', onMove)
+            map.off('dragend', onMove)
         }
     }, [map, onMove])
 

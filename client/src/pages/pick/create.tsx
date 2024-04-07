@@ -1,18 +1,25 @@
 import {Breadcrumb, Button, Input, Space} from "antd";
 import TextEditor from "../../components/editor/editor";
-import {onEdit, onPickEdit, picksActions, selectPicks} from "../../slices/picksSlice";
+import {onPickEdit, picksActions, selectPicks} from "../../slices/picksSlice";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link, useNavigate, useParams} from "react-router-dom";
+import {generalActions, onEdit, selectGeneral} from "../../slices/generalSlice";
 
 function CreatePick() {
     const {mapId} = useParams()
     const dispatch = useDispatch()
     const {pick} = useSelector(selectPicks)
+    const {markerPosition} = useSelector(selectGeneral)
     const navigate = useNavigate()
 
     useEffect(() => {
+        if (!markerPosition.lat && !markerPosition.lng) {
+            dispatch(generalActions.getMap(mapId))
+        }
+
         dispatch(onEdit(true))
+
         return () => {
             dispatch(onEdit(false))
         }
@@ -20,7 +27,7 @@ function CreatePick() {
 
     function handleSubmit() {
         dispatch(picksActions.savePick({
-            pick, mapId, cb: () => {
+            pick: {...pick, ...markerPosition}, mapId, cb: () => {
                 navigate(`/${mapId}/picks`)
             }
         }))

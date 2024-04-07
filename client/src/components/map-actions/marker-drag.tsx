@@ -6,7 +6,7 @@ import {onMarkerDrag, selectGeneral} from "../../slices/generalSlice";
 
 function MarkerDrag() {
     const dispatch = useDispatch()
-    const {markerPosition} = useSelector(selectGeneral)
+    const {markerPosition, currentUserPosition} = useSelector(selectGeneral)
     const markerRef = useRef(null)
 
 
@@ -23,11 +23,15 @@ function MarkerDrag() {
         [],
     )
 
+    const getPosition = {
+        lat: markerPosition.lat || currentUserPosition.lat,
+        lng: markerPosition.lng || currentUserPosition.lng
+    }
 
     return <Marker
         draggable={true}
         eventHandlers={eventHandlers}
-        position={{lat: markerPosition.lat as number, lng: markerPosition.lng as number}}
+        position={getPosition}
         ref={markerRef}>
     </Marker>
 }

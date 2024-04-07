@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Marker, Popup, useMap} from "react-leaflet";
 import {useDispatch} from "react-redux";
-import {onMapMove} from "../../slices/generalSlice";
+import {onCurrentLocation} from "../../slices/generalSlice";
 
 function GetCurrentLocation() {
     const [position, setPosition] = useState(null);
@@ -13,7 +13,7 @@ function GetCurrentLocation() {
     useEffect(() => {
         map.locate().on("locationfound", function (e) {
             setPosition(e.latlng);
-            dispatch(onMapMove(e.latlng))
+            dispatch(onCurrentLocation(e.latlng))
             map.flyTo(e.latlng, map.getZoom());
             const radius = e.accuracy;
             const circle = L.circle(e.latlng, radius);

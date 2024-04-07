@@ -1,19 +1,22 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {Breadcrumb, Button, Input, Space} from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import {onEdit, onPickEdit, picksActions, selectPicks} from "../../slices/picksSlice";
+import {onPickEdit, picksActions, selectPicks} from "../../slices/picksSlice";
 import {useEffect} from "react";
 import TextEditor from "../../components/editor/editor";
-import {EVENT_CHANNELS} from "../../utils/constants";
+import {generalActions, onEdit, selectGeneral} from "../../slices/generalSlice";
 
 function Pick() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const {mapId, pickId} = useParams()
     const {pick} = useSelector(selectPicks)
+    const {markerPosition} = useSelector(selectGeneral)
 
     useEffect(() => {
-        dispatch(picksActions.getPick({mapId, pickId}))
+        // dispatch(generalActions.getMap(mapId))
+        dispatch(generalActions.getPick({mapId, pickId}))
+
         dispatch(onEdit(true))
 
         return () => {
@@ -23,7 +26,7 @@ function Pick() {
 
     function handleSubmit() {
         dispatch(picksActions.savePick({
-            pick, mapId, cb: () => {
+            pick: {...pick, ...markerPosition}, mapId, cb: () => {
                 navigate(`/${mapId}/picks`)
             }
         }))

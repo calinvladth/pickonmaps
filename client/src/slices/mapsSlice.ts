@@ -64,9 +64,7 @@ export const mapsSlice = createSlice({
         onMapLoad: (state, {payload}) => {
             state.map = payload
         },
-        onReset: () => {
-            return initialState
-        }
+        onMapReset: () => initialState
     },
     extraReducers: builder => {
         builder
@@ -108,7 +106,7 @@ export const mapsSlice = createSlice({
     }
 })
 
-export const {onMapEdit, onMapLoad, onReset} = mapsSlice.actions
+export const {onMapEdit, onMapLoad, onMapReset} = mapsSlice.actions
 export const selectMaps = (state: { maps: MapsState }) => state.maps
 
 export const mapsActions = {

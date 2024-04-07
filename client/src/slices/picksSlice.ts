@@ -6,9 +6,7 @@ export interface PickState {
     id?: string
     category: string,
     name: string,
-    text: string,
-    lat?: number,
-    lng?: number
+    text: string
 }
 
 export interface PicksState {
@@ -16,8 +14,6 @@ export interface PicksState {
     isLoadingPick: boolean,
     isSaveLoading: boolean
     isDeleteLoading: boolean,
-    isPickEdit: boolean,
-    position: { lat: number, lng: number },
     picks: PickState[],
     pick: PickState
 }
@@ -27,28 +23,24 @@ const initialState: PicksState = {
     isLoadingPick: false,
     isSaveLoading: false,
     isDeleteLoading: false,
-    isPickEdit: false,
-    position: {lat: 44.43996963311098, lng: 26.09257221221924},
     picks: [],
     pick: {
         category: '',
         name: '',
-        lat: 0,
-        lng: 0,
         text: ''
     }
 }
 
 
-export const getPick = createAsyncThunk('map/getPick', async ({mapId, pickId}: { mapId: string, pickId: string }) => {
+export const getPick = createAsyncThunk('pick/getPick', async ({mapId, pickId}: { mapId: string, pickId: string }) => {
     return await picksApi.getPick({mapId, pickId})
 })
 
-export const getPicks = createAsyncThunk('map/getPicks', async (mapId: string) => {
+export const getPicks = createAsyncThunk('pick/getPicks', async (mapId: string) => {
     return await picksApi.getPicks(mapId)
 })
 
-export const savePick = createAsyncThunk('map/savePick', async ({
+export const savePick = createAsyncThunk('pick/savePick', async ({
                                                                     pick,
                                                                     mapId,
                                                                     cb
@@ -77,29 +69,6 @@ export const picksSlice = createSlice({
     name: 'map',
     initialState,
     reducers: {
-        onMapMove: (state, action) => {
-            if (!state.isPickEdit && !state.pick.id) {
-                state.position.lat = action.payload?.lat
-                state.position.lng = action.payload?.lng
-            }
-        },
-        onEdit: (state, action) => {
-            state.isPickEdit = action.payload
-
-            if (!state.pick.lat && !state.pick.lng) {
-                state.pick.lat = state.position?.lat
-                state.pick.lng = state.position?.lng
-            }
-
-            if (!action.payload) {
-                delete state.pick.id
-                state.pick.category = ''
-                state.pick.name = ''
-                state.pick.text = ''
-                state.pick.lat = 0
-                state.pick.lng = 0
-            }
-        },
         onPickSelect: (state, action) => {
             state.pick = action.payload
         },
@@ -108,7 +77,11 @@ export const picksSlice = createSlice({
                 ...state.pick,
                 ...action.payload
             }
-        }
+        },
+        onPickLoad: (state, {payload}) => {
+            state.pick = payload
+        },
+        onPickReset: () => initialState
     },
     extraReducers: builder => {
         builder
@@ -131,7 +104,6 @@ export const picksSlice = createSlice({
 
         builder
             .addCase(savePick.fulfilled, (state) => {
-                state.isPickEdit = false
                 state.isSaveLoading = false
             })
 
@@ -145,8 +117,6 @@ export const picksSlice = createSlice({
                 delete state.pick.id
                 state.pick.category = ''
                 state.pick.name = ''
-                state.pick.lat = 0
-                state.pick.lng = 0
                 state.isDeleteLoading = false
             })
             .addCase(deletePick.pending, (state) => {
@@ -156,7 +126,7 @@ export const picksSlice = createSlice({
     }
 })
 
-export const {onMapMove, onEdit, onPickSelect, onPickEdit} = picksSlice.actions
+export const {onPickSelect, onPickReset, onPickLoad, onPickEdit} = picksSlice.actions
 
 export const selectPicks = (state: { picks: PicksState }) => state.picks
 

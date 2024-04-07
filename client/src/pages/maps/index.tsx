@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import {Breadcrumb, Popconfirm} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {COLORS, ICON_SIZE} from "../../utils/constants";
+import {onReset} from "../../slices/generalSlice";
 
 function Maps() {
     const dispatch = useDispatch()
@@ -12,6 +13,7 @@ function Maps() {
     const [open, setOpen] = useState('')
 
     useEffect(() => {
+        dispatch(onReset())
         dispatch(mapsActions.getMaps())
     }, [])
 

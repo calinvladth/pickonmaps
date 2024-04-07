@@ -17,7 +17,7 @@ function MapListPicks() {
 
     function handlePickClick(pick: { lat: number, lng: number }) {
         const {lat, lng} = pick
-        dispatch(onPickSelect(pick))
+        // dispatch(onPickSelect(pick))
         channel.postMessage({lat, lng})
     }
 
