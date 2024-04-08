@@ -7,18 +7,19 @@ import Pick from "./pages/pick";
 import CreatePick from "./pages/pick/create";
 import CreateMap from "./pages/maps/create";
 import EditMap from "./pages/maps/edit";
+import {PATHS} from "./utils/constants";
 
 function App() {
     return (
         <>
             <Routes>
-                <Route path="/" element={<Layout/>}>
+                <Route path={PATHS.MAPS_VIEW} element={<Layout/>}>
                     <Route index element={<Maps/>}/>
-                    <Route path="create" element={<CreateMap/>}/>
-                    <Route path=":mapId" element={<EditMap/>}/>
-                    <Route path=":mapId/picks" element={<Picks/>}/>
-                    <Route path=":mapId/picks/create" element={<CreatePick/>}/>
-                    <Route path=":mapId/picks/:pickId" element={<Pick/>}/>
+                    <Route path={PATHS.MAP_CREATE} element={<CreateMap/>}/>
+                    <Route path={PATHS.MAP_EDIT} element={<EditMap/>}/>
+                    <Route path={PATHS.PICKS_VIEW} element={<Picks/>}/>
+                    <Route path={PATHS.PICKS_CREATE} element={<CreatePick/>}/>
+                    <Route path={PATHS.PICK_VIEW} element={<Pick/>}/>
 
                     {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit

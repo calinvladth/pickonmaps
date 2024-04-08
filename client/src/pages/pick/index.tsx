@@ -5,6 +5,8 @@ import {onPickEdit, picksActions, selectPicks} from "../../slices/picksSlice";
 import {useEffect} from "react";
 import TextEditor from "../../components/editor/editor";
 import {generalActions, onEdit, selectGeneral} from "../../slices/generalSlice";
+import replaceKeysInUrl from "../../utils/replace-keys-in-url";
+import {PATHS} from "../../utils/constants";
 
 function Pick() {
     const navigate = useNavigate()
@@ -27,7 +29,7 @@ function Pick() {
     function handleSubmit() {
         dispatch(picksActions.savePick({
             pick: {...pick, ...markerPosition}, mapId, cb: () => {
-                navigate(`/${mapId}/picks`)
+                navigate(replaceKeysInUrl({keys: {mapId}, url: PATHS.PICKS_VIEW}))
             }
         }))
     }
@@ -37,10 +39,10 @@ function Pick() {
             <Breadcrumb
                 items={[
                     {
-                        title: <Link to="/">Maps</Link>,
+                        title: <Link to={PATHS.MAPS_VIEW}>Maps</Link>,
                     },
                     {
-                        title: <Link to={`/${mapId}/picks`}>Picks</Link>
+                        title: <Link to={replaceKeysInUrl({keys: {mapId}, url: PATHS.PICKS_VIEW})}>Picks</Link>
                     },
                     {
                         title: pick.name

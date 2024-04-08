@@ -4,8 +4,9 @@ import {mapsActions, MapState, selectMaps} from "../../slices/mapsSlice";
 import {Link} from "react-router-dom";
 import {Breadcrumb, Popconfirm} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import {COLORS, ICON_SIZE} from "../../utils/constants";
+import {COLORS, ICON_SIZE, PATHS} from "../../utils/constants";
 import {onReset} from "../../slices/generalSlice";
+import replaceKeysInUrl from "../../utils/replace-keys-in-url";
 
 function Maps() {
     const dispatch = useDispatch()
@@ -28,7 +29,7 @@ function Maps() {
     if (maps.length === 0) {
         return <>
             <p>No maps</p>
-            <Link to="/create">Create</Link>
+            <Link to={PATHS.MAP_CREATE}>Create</Link>
         </>
     }
 
@@ -41,11 +42,11 @@ function Maps() {
             ]}
         />
         <hr/>
-        <Link to="/create">Create</Link>
+        <Link to={PATHS.MAP_CREATE}>Create</Link>
         <ul>
             {maps.map(map => <li key={map.id}>
-                <Link to={`/${map.id}/picks`}>{map.name}</Link>
-                <Link to={`/${map.id}`}><EditOutlined style={{fontSize: ICON_SIZE.SM, color: COLORS.ORANGE}}/></Link>
+                <Link to={replaceKeysInUrl({keys: {mapId: map.id}, url: PATHS.PICKS_VIEW})}>{map.name}</Link>
+                <Link to={replaceKeysInUrl({keys: {mapId: map.id}, url: PATHS.MAP_EDIT})}><EditOutlined style={{fontSize: ICON_SIZE.SM, color: COLORS.ORANGE}}/></Link>
 
                 <Popconfirm
                     title="Delete the task"

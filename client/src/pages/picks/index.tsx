@@ -3,8 +3,9 @@ import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {onPickReset, picksActions, PickState, selectPicks} from "../../slices/picksSlice";
 import {Breadcrumb} from "antd";
-import {EVENT_CHANNELS} from "../../utils/constants";
+import {EVENT_CHANNELS, PATHS} from "../../utils/constants";
 import {generalActions, selectGeneral} from "../../slices/generalSlice";
+import replaceKeysInUrl from "../../utils/replace-keys-in-url";
 
 function Picks() {
     const {mapId} = useParams()
@@ -36,7 +37,7 @@ function Picks() {
             <Breadcrumb
                 items={[
                     {
-                        title: <Link to="/">Maps</Link>,
+                        title: <Link to={PATHS.MAPS_VIEW}>Maps</Link>,
                     },
                     {
                         title: 'Picks'
@@ -44,7 +45,7 @@ function Picks() {
                 ]}
             />
             <p>No picks</p>
-            <Link to={`create`}>Create pick</Link>
+            <Link to={replaceKeysInUrl({keys: {mapId}, url: PATHS.PICKS_CREATE})}>Create pick</Link>
         </>
     }
 
@@ -52,14 +53,14 @@ function Picks() {
         <Breadcrumb
             items={[
                 {
-                    title: <Link to="/">Maps</Link>,
+                    title: <Link to={PATHS.MAPS_VIEW}>Maps</Link>,
                 },
                 {
                     title: 'Picks',
                 }
             ]}
         />
-        <Link to={`create`}>Create pick</Link>
+        <Link to={replaceKeysInUrl({keys: {mapId}, url: PATHS.PICKS_CREATE})}>Create pick</Link>
         <ul>
             {picks.map(pick => <li key={pick.id} onClick={() => handleClick(pick)}>{pick.name}</li>)}
         </ul>

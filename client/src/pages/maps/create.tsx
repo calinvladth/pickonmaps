@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {onMapEdit, saveMap, selectMaps} from "../../slices/mapsSlice";
 import {useEffect} from "react";
 import {generalActions, selectGeneral} from "../../slices/generalSlice";
+import {PATHS} from "../../utils/constants";
 
 function CreateMap() {
     const navigate = useNavigate()
@@ -19,7 +20,7 @@ function CreateMap() {
     }, [dispatch])
 
     function handleSubmit() {
-        dispatch(saveMap({map: {...map, ...markerPosition}, cb: () => {navigate('/')}}))
+        dispatch(saveMap({map: {...map, ...markerPosition}, cb: () => {navigate(PATHS.MAPS_VIEW)}}))
     }
 
     return <>
@@ -27,7 +28,7 @@ function CreateMap() {
             <Breadcrumb
                 items={[
                     {
-                        title: <Link to="/">Maps</Link>,
+                        title: <Link to={PATHS.MAPS_VIEW}>Maps</Link>,
                     },
                     {
                         title: map.name || 'Create map'

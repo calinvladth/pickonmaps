@@ -14,5 +14,14 @@ export const EVENT_CHANNELS = {
     MOVE_TO_PICK: 'MOVE_TO_PICK',
     PICK_MODAL_EDIT: 'PICK_MODAL_EDIT',
     PICK_MODAL_CREATE: 'PICK_MODAL_CREATE',
+}
+
+export const PATHS = {
+    MAPS_VIEW: '/maps',
+    MAP_CREATE: '/maps/create',
+    MAP_EDIT: '/maps/:mapId',
+    PICKS_VIEW: '/maps/:mapId/picks',
+    PICKS_CREATE: '/maps/:mapId/picks/create',
+    PICK_VIEW: '/maps/:mapId/picks/:pickId'
 
 }

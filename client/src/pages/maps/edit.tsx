@@ -4,6 +4,8 @@ import {generalActions, onEdit, selectGeneral} from "../../slices/generalSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {Breadcrumb, Button, Input, Space} from "antd";
 import {onMapEdit, saveMap, selectMaps} from "../../slices/mapsSlice";
+import replaceKeysInUrl from "../../utils/replace-keys-in-url";
+import {PATHS} from "../../utils/constants";
 
 function EditMap() {
     const navigate = useNavigate()
@@ -22,7 +24,11 @@ function EditMap() {
     }, [dispatch, mapId])
 
     function handleSubmit() {
-        dispatch(saveMap({map: {...map, ...markerPosition}, cb: () => {navigate(`/${map.id}/picks`)}}))
+        dispatch(saveMap({
+            map: {...map, ...markerPosition}, cb: () => {
+                navigate(replaceKeysInUrl({keys: {mapId}, url: PATHS.PICKS_VIEW}))
+            }
+        }))
     }
 
     return <>
@@ -30,7 +36,7 @@ function EditMap() {
             <Breadcrumb
                 items={[
                     {
-                        title: <Link to="/">Maps</Link>,
+                        title: <Link to={PATHS.MAPS_VIEW}>Maps</Link>,
                     },
                     {
                         title: map.name || 'Edit map'
