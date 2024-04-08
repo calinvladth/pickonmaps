@@ -7,22 +7,22 @@ async function getMap(mapId: string): Promise<MapState> {
     return response.data
 }
 async function getMaps(): Promise<MapState[]> {
-    const response = await axios.get('http://localhost:3000/maps/')
+    const response = await axios.get(`${API}/maps/`)
     return response.data
 }
 
 async function createMap(map: MapState) {
-    const response = await axios.post('http://localhost:3000/maps/', map)
+    const response = await axios.post(`${API}/maps/`, map)
     return response.data
 }
 
 export async function editMap(map: MapState) {
-    const response = await axios.patch(`http://localhost:3000/maps/${map.id}/`, map)
+    const response = await axios.patch(`${API}/maps/${map.id}/`, map)
     return response.data
 }
 
 async function deleteMap(map: MapState) {
-    await axios.delete(`http://localhost:3000/maps/${map.id}/`)
+    await axios.delete(`${API}/maps/${map.id}/`)
 }
 
 export const mapsApi = {

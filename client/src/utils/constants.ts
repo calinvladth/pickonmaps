@@ -17,6 +17,8 @@ export const EVENT_CHANNELS = {
 }
 
 export const PATHS = {
+    SIGNIN: '/',
+    SIGNUP: '/signup',
     MAPS_VIEW: '/maps',
     MAP_CREATE: '/maps/create',
     MAP_EDIT: '/maps/:mapId',

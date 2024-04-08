@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import picksReducer from "./picksSlice";
 import mapsReducer from './mapsSlice'
 import generalReducer from './generalSlice'
+import userReducer from './userSlice'
 
 export const store = configureStore({
     reducer: {
         picks: picksReducer,
         maps: mapsReducer,
-        general: generalReducer
+        general: generalReducer,
+        user: userReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: false}),
 })
