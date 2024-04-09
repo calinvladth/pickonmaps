@@ -3,6 +3,7 @@ import {mapsApi} from "../services/maps-api";
 import {onMapLoad, onMapReset} from "./mapsSlice";
 import {onPickLoad, onPickReset} from "./picksSlice";
 import {picksApi} from "../services/picks-api";
+import handleRequestErrors from "../utils/handleRequestErrors";
 
 
 export interface GeneralState {
@@ -29,19 +30,32 @@ const initialState: GeneralState = {
     isPickLoading: false
 }
 
-export const getMap = createAsyncThunk('general/getMap', async (mapId: string, {dispatch}) => {
-    const response = await mapsApi.getMap(mapId)
-    dispatch(onMapLoad(response))
-    return response
+// TODO: Move to maps
+export const getMap = createAsyncThunk('general/getMap', async (mapId: string, {getState, dispatch, rejectWithValue}) => {
+    try {
+        const {user} = getState()
+        const response = await mapsApi.getMap({mapId, token: user.token})
+        dispatch(onMapLoad(response))
+        return response
+    } catch (err) {
+        return rejectWithValue(handleRequestErrors(err))
+    }
+
 })
 
+// TODO: Move to picks
 export const getPick = createAsyncThunk('general/getPick', async ({
                                                                       mapId,
                                                                       pickId
-                                                                  }: { mapId: string, pickId: string }, {dispatch}) => {
-    const response = await picksApi.getPick({mapId, pickId})
-    dispatch(onPickLoad(response))
-    return response
+                                                                  }: { mapId: string, pickId: string }, {dispatch, rejectWithValue}) => {
+    try {
+        const response = await picksApi.getPick({mapId, pickId})
+        dispatch(onPickLoad(response))
+        return response
+    } catch (err) {
+        return rejectWithValue(handleRequestErrors(err))
+    }
+
 })
 
 export const onCreate = createAsyncThunk('general/onCreate', async (isEditView: boolean, {dispatch}) => {
@@ -68,7 +82,7 @@ export const generalSlice = createSlice({
             state.currentUserPosition.lat = payload.lat
             state.currentUserPosition.lng = payload.lng
         },
-        onReset: (state) => {
+        onGeneralReset: (state) => {
             state.markerPosition = {
                 lat: 0,
                 lng: 0
@@ -102,7 +116,7 @@ export const generalSlice = createSlice({
     }
 })
 
-export const {onMapMove, onEdit, onMarkerDrag, onCurrentLocation, onReset} = generalSlice.actions
+export const {onMapMove, onEdit, onMarkerDrag, onCurrentLocation, onGeneralReset} = generalSlice.actions
 export const selectGeneral = (state: { general: GeneralState }) => state.general
 
 export const generalActions = {

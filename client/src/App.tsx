@@ -11,30 +11,30 @@ import {PATHS} from "./utils/constants";
 import AuthLayout from "./components/auth-layout";
 import SignIn from "./pages/authentication/singnin";
 import SignUp from "./pages/authentication/singup";
+import UserProfile from "./pages/user-profile/user-profile";
+import RequireAuth from "./components/require-auth";
 
 function App() {
     return (
-        <>
-            <Routes>
-                <Route path={PATHS.SIGNIN} element={<AuthLayout/>}>
-                    <Route index element={<SignIn/>}/>
-                    <Route path={PATHS.SIGNUP} element={<SignUp/>}/>
-                </Route>
-                <Route path={PATHS.MAPS_VIEW} element={<MapLayout/>}>
-                    <Route index element={<Maps/>}/>
-                    <Route path={PATHS.MAP_CREATE} element={<CreateMap/>}/>
-                    <Route path={PATHS.MAP_EDIT} element={<EditMap/>}/>
-                    <Route path={PATHS.PICKS_VIEW} element={<Picks/>}/>
-                    <Route path={PATHS.PICKS_CREATE} element={<CreatePick/>}/>
-                    <Route path={PATHS.PICK_VIEW} element={<Pick/>}/>
+        <Routes>
+            <Route path={PATHS.SIGNIN} element={<AuthLayout/>}>
+                <Route index element={<SignIn/>}/>
+                <Route path={PATHS.SIGNUP} element={<SignUp/>}/>
+            </Route>
+            <Route path={PATHS.MAPS_VIEW} element={<RequireAuth><MapLayout/></RequireAuth>}>
+                <Route index element={<Maps/>}/>
+                <Route path={PATHS.MAP_CREATE} element={<CreateMap/>}/>
+                <Route path={PATHS.MAP_EDIT} element={<EditMap/>}/>
+                <Route path={PATHS.PICKS_VIEW} element={<Picks/>}/>
+                <Route path={PATHS.PICKS_CREATE} element={<CreatePick/>}/>
+                <Route path={PATHS.PICK_VIEW} element={<Pick/>}/>
+            </Route>
+            <Route path={PATHS.ACCOUNT} element={<RequireAuth><MapLayout/></RequireAuth>}>
+                <Route index element={<UserProfile/>}/>
+            </Route>
 
-                    {/* Using path="*"" means "match anything", so this route
-                acts like a catch-all for URLs that we don't have explicit
-                routes for. */}
-                    <Route path="*" element={<p>404</p>}/>
-                </Route>
-            </Routes>
-        </>
+            <Route path="*" element={<p>404</p>}/>
+        </Routes>
     )
 }
 

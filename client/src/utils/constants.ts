@@ -17,6 +17,7 @@ export const EVENT_CHANNELS = {
 }
 
 export const PATHS = {
+    ACCOUNT: '/account',
     SIGNIN: '/',
     SIGNUP: '/signup',
     MAPS_VIEW: '/maps',

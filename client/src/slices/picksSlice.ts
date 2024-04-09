@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {picksApi} from "../services/picks-api";
 import {message} from "antd";
+import handleRequestErrors from "../utils/handleRequestErrors";
 
 export interface PickState {
     id?: string
@@ -32,36 +33,55 @@ const initialState: PicksState = {
 }
 
 
-export const getPick = createAsyncThunk('pick/getPick', async ({mapId, pickId}: { mapId: string, pickId: string }) => {
-    return await picksApi.getPick({mapId, pickId})
+export const getPick = createAsyncThunk('pick/getPick', async ({mapId, pickId}: { mapId: string, pickId: string }, {getState, rejectWithValue}) => {
+    try {
+        const {user} = getState()
+        return await picksApi.getPick({mapId, pickId, token: user.token})
+    } catch (err) {
+        return rejectWithValue(handleRequestErrors(err))
+    }
+
 })
 
-export const getPicks = createAsyncThunk('pick/getPicks', async (mapId: string) => {
-    return await picksApi.getPicks(mapId)
+export const getPicks = createAsyncThunk('pick/getPicks', async (mapId: string, {getState, rejectWithValue}) => {
+    try {
+        const {user} = getState()
+        return await picksApi.getPicks({mapId, token: user.token})
+    } catch (err) {
+        return rejectWithValue(handleRequestErrors(err))
+    }
+
 })
 
 export const savePick = createAsyncThunk('pick/savePick', async ({
                                                                     pick,
                                                                     mapId,
                                                                     cb
-                                                                }: { pick: PickState, mapId: string, cb: () => void }, {dispatch}) => {
-    pick.id ? await picksApi.editPick({pick, mapId}) : await picksApi.createPick({pick, mapId})
-    dispatch(getPicks(mapId))
-    cb()
-
-    message.success(pick.id ? "Pick edited successfully" : "Pick created successfully")
+                                                                }: { pick: PickState, mapId: string, cb: () => void }, {getState, dispatch, rejectWithValue}) => {
+    try {
+        const {user} = getState()
+        pick.id ? await picksApi.editPick({pick, mapId, token: user.token}) : await picksApi.createPick({pick, mapId, token: user.token})
+        dispatch(getPicks(mapId))
+        cb()
+        return {id: pick.id}
+    } catch (err) {
+        return rejectWithValue(handleRequestErrors(err))
+    }
 })
 
 export const deletePick = createAsyncThunk('map/deletePick', async ({
                                                                         pick,
                                                                         mapId,
                                                                         cb
-                                                                    }: { pick: PickState, mapId: string, cb: () => void }, {dispatch}) => {
-    await picksApi.deletePick({pick, mapId})
-    cb()
-    dispatch(getPicks(mapId))
-
-    message.success("Pick removed successfully")
+                                                                    }: { pick: PickState, mapId: string, cb: () => void }, {getState, dispatch, rejectWithValue}) => {
+    try {
+        const {user} = getState()
+        await picksApi.deletePick({pick, mapId, token: user.token})
+        cb()
+        dispatch(getPicks(mapId))
+    } catch (err) {
+        return rejectWithValue(handleRequestErrors(err))
+    }
 })
 
 
@@ -94,22 +114,29 @@ export const picksSlice = createSlice({
             })
 
         builder
-            .addCase(getPicks.pending, (state) => {
-                state.isLoading = true
-            })
             .addCase(getPicks.fulfilled, (state, {payload}) => {
                 state.picks = payload
                 state.isLoading = false
             })
-
-        builder
-            .addCase(savePick.fulfilled, (state) => {
-                state.isSaveLoading = false
+            .addCase(getPicks.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(getPicks.rejected, (state, {payload}) => {
+                state.isLoading = false
+                message.error(payload as string)
             })
 
         builder
+            .addCase(savePick.fulfilled, (state, {payload}) => {
+                state.isSaveLoading = false
+                message.success(payload?.id ? "Pick edited successfully" : "Pick created successfully")
+            })
             .addCase(savePick.pending, (state) => {
                 state.isSaveLoading = true
+            })
+            .addCase(savePick.rejected, (state, {payload}) => {
+                state.isSaveLoading = false
+                message.error(payload as string)
             })
 
         builder
@@ -118,9 +145,14 @@ export const picksSlice = createSlice({
                 state.pick.category = ''
                 state.pick.name = ''
                 state.isDeleteLoading = false
+                message.success("Pick removed successfully")
             })
             .addCase(deletePick.pending, (state) => {
                 state.isDeleteLoading = true
+            })
+            .addCase(deletePick.rejected, (state, {payload}) => {
+                state.isDeleteLoading = false
+                message.error(payload as string)
             })
 
     }

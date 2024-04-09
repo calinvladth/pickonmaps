@@ -1,18 +1,32 @@
-import { configureStore } from '@reduxjs/toolkit'
+import {combineReducers, configureStore} from '@reduxjs/toolkit'
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
 import picksReducer from "./picksSlice";
 import mapsReducer from './mapsSlice'
 import generalReducer from './generalSlice'
 import userReducer from './userSlice'
 
+const persistConfig = {
+    key: 'root',
+    storage: storage
+};
+
+const rootReducer = combineReducers({
+    picks: picksReducer,
+    maps: mapsReducer,
+    general: generalReducer,
+    user: userReducer
+})
+
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
 export const store = configureStore({
-    reducer: {
-        picks: picksReducer,
-        maps: mapsReducer,
-        general: generalReducer,
-        user: userReducer
-    },
+    reducer: persistedReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: false}),
 })
+
+export const persistor = persistStore(store);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>

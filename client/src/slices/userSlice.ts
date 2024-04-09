@@ -1,7 +1,10 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {authApi, UserInterface} from "../services/auth-api";
 import {message} from "antd";
-import axios, {AxiosError} from "axios";
+import axios from "axios";
+import {onMapReset} from "./mapsSlice";
+import {onPickReset} from "./picksSlice";
+import {onGeneralReset} from "./generalSlice";
 
 
 export interface UserState {
@@ -37,7 +40,6 @@ export const signUp = createAsyncThunk('user/signUp', async (user: UserInterface
         const response = await authApi.signUp(user)
         return response
     } catch (err) {
-        console.log(err)
         if (axios.isAxiosError(err)) {
             return rejectWithValue(err.response?.data)
         }
@@ -45,10 +47,19 @@ export const signUp = createAsyncThunk('user/signUp', async (user: UserInterface
     }
 })
 
+export const signOut = createAsyncThunk('user/signOut', async (_, {dispatch}) => {
+    dispatch(onUserReset())
+    dispatch(onGeneralReset())
+    dispatch(onMapReset())
+    dispatch(onPickReset())
+})
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
-    reducers: {},
+    reducers: {
+        onUserReset: () => initialState
+    },
     extraReducers: builder => {
         builder.addCase(signIn.fulfilled, (state, {payload}) => {
             state.token = payload.token
@@ -82,7 +93,7 @@ export const userSlice = createSlice({
     }
 })
 
-// export const {} = userSlice.actions
+export const {onUserReset} = userSlice.actions
 export const selectUser = (state: { user: UserState }) => state.user
 
 export const userActions = {
