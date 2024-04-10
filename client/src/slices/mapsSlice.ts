@@ -87,6 +87,7 @@ export const mapsSlice = createSlice({
             .addCase(getMaps.fulfilled, (state, {payload}) => {
                 state.maps = payload
                 state.isLoading = false
+                state.map = initialState.map
             })
 
         builder

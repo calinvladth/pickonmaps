@@ -44,10 +44,11 @@ export const getMap = createAsyncThunk('general/getMap', async (mapId: string, {
     rejectWithValue
 }) => {
     try {
-        const {user} = getState()
+        const {user, maps} = getState()
         const response = await mapsApi.getMap({mapId, token: user.token})
         dispatch(onMapLoad(response))
-        return response
+
+        return {data: response, map: maps.map}
     } catch (err) {
         return rejectWithValue(handleRequestErrors(err))
     }
@@ -105,11 +106,13 @@ export const generalSlice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(getMap.fulfilled, (state, {payload}) => {
+            const {data, map} = payload
             state.isLoading = false
-            if (!state.markerPosition.lat && !state.markerPosition.lng) {
+
+            if (!map.id) {
                 state.markerPosition = {
-                    lat: payload.lat,
-                    lng: payload.lng
+                    lat: data.lat,
+                    lng: data.lng
                 }
             }
         })
