@@ -8,7 +8,7 @@ import {COLORS, ICON_SIZE, PATHS} from "../../utils/constants";
 import {onGeneralReset} from "../../slices/generalSlice";
 import replaceKeysInUrl from "../../utils/replace-keys-in-url";
 
-function Maps() {
+function MapsView() {
     const dispatch = useDispatch()
     const {maps, isLoading, isDeleteLoading} = useSelector(selectMaps)
     const [open, setOpen] = useState('')
@@ -65,4 +65,4 @@ function Maps() {
     </>
 }
 
-export default Maps
+export default MapsView

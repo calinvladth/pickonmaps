@@ -1,26 +1,34 @@
-import {Breadcrumb, Button, Input, Space} from "antd";
-import {Link, useNavigate} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {onMapEdit, saveMap, selectMaps} from "../../slices/mapsSlice";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {useEffect} from "react";
-import {generalActions, selectGeneral} from "../../slices/generalSlice";
+import {generalActions, onEdit, selectGeneral} from "../../slices/generalSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {Breadcrumb, Button, Input, Space} from "antd";
+import {onMapEdit, saveMap, selectMaps} from "../../slices/mapsSlice";
+import replaceKeysInUrl from "../../utils/replace-keys-in-url";
 import {PATHS} from "../../utils/constants";
 
-function CreateMap() {
+function MapEdit() {
     const navigate = useNavigate()
+    const {mapId} = useParams()
     const {map} = useSelector(selectMaps)
     const {markerPosition} = useSelector(selectGeneral)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(generalActions.onCreate(true))
+        dispatch(onEdit(true))
+        dispatch(generalActions.getMap(mapId))
+
         return () => {
-            dispatch(generalActions.onCreate(false))
+            dispatch(onEdit(false))
         }
-    }, [dispatch])
+    }, [dispatch, mapId])
 
     function handleSubmit() {
-        dispatch(saveMap({map: {...map, ...markerPosition}, cb: () => {navigate(PATHS.MAPS_VIEW)}}))
+        dispatch(saveMap({
+            map: {...map, ...markerPosition}, cb: () => {
+                navigate(replaceKeysInUrl({keys: {mapId}, url: PATHS.PICKS_VIEW}))
+            }
+        }))
     }
 
     return <>
@@ -31,7 +39,7 @@ function CreateMap() {
                         title: <Link to={PATHS.MAPS_VIEW}>Maps</Link>,
                     },
                     {
-                        title: map.name || 'Create map'
+                        title: map.name || 'Edit map'
                     }
                 ]}
             />
@@ -45,4 +53,4 @@ function CreateMap() {
     </>
 }
 
-export default CreateMap
+export default MapEdit

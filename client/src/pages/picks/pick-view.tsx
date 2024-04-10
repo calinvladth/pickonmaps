@@ -8,7 +8,7 @@ import {generalActions, onEdit, selectGeneral} from "../../slices/generalSlice";
 import replaceKeysInUrl from "../../utils/replace-keys-in-url";
 import {PATHS} from "../../utils/constants";
 
-function Pick() {
+function PickView() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const {mapId, pickId} = useParams()
@@ -59,4 +59,4 @@ function Pick() {
     </>
 }
 
-export default Pick
+export default PickView
