@@ -16,9 +16,7 @@ function Pick() {
     const {markerPosition} = useSelector(selectGeneral)
 
     useEffect(() => {
-        // dispatch(generalActions.getMap(mapId))
         dispatch(generalActions.getPick({mapId, pickId}))
-
         dispatch(onEdit(true))
 
         return () => {

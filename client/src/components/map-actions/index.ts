@@ -1,11 +1,13 @@
 import MarkerDrag from "./marker-drag";
-import GetCenterPosition from "./get-center-position";
-import GetCurrentLocation from "./get-current-location";
+import SetCenterPosition from "./set-center-position";
+import WatchPosition from "./watch-position";
+import WatchZoom from "./watch-zoom";
 
 const MapActions = {
   MarkerDrag,
-  GetCenterPosition,
-  GetCurrentLocation
+  SetCenterPosition,
+  WatchPosition,
+  WatchZoom
 }
 
 export default MapActions

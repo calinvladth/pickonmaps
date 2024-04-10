@@ -1,8 +1,9 @@
 import axios from "axios";
 import {MapState} from "../slices/mapsSlice";
 import {API} from "../utils/constants";
+import {PositionInterface} from "../slices/generalSlice";
 
-async function getMap({mapId, token}: {mapId: string, token: string}): Promise<MapState> {
+async function getMap({mapId, token}: {mapId: string, token: string}): Promise<MapState & PositionInterface> {
     const response = await axios.get(`${API}/maps/${mapId}`, {
         headers: {
             'Bearer': token

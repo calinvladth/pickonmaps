@@ -4,11 +4,17 @@ import {onMapLoad, onMapReset} from "./mapsSlice";
 import {onPickLoad, onPickReset} from "./picksSlice";
 import {picksApi} from "../services/picks-api";
 import handleRequestErrors from "../utils/handleRequestErrors";
+import {MAP_ZOOM} from "../utils/constants";
 
+export interface PositionInterface {
+    lat: number,
+    lng: number
+}
 
 export interface GeneralState {
-    markerPosition: { lat: number, lng: number },
-    currentUserPosition: { lat: number, lng: number }
+    markerPosition: PositionInterface,
+    currentUserPosition: PositionInterface
+    mapZoom: number,
     isLoading: boolean,
     isEditView: boolean,
     isMapLoading: boolean,
@@ -24,6 +30,7 @@ const initialState: GeneralState = {
         lat: 0,
         lng: 0
     },
+    mapZoom: MAP_ZOOM,
     isLoading: false,
     isEditView: false,
     isMapLoading: false,
@@ -31,7 +38,11 @@ const initialState: GeneralState = {
 }
 
 // TODO: Move to maps
-export const getMap = createAsyncThunk('general/getMap', async (mapId: string, {getState, dispatch, rejectWithValue}) => {
+export const getMap = createAsyncThunk('general/getMap', async (mapId: string, {
+    getState,
+    dispatch,
+    rejectWithValue
+}) => {
     try {
         const {user} = getState()
         const response = await mapsApi.getMap({mapId, token: user.token})
@@ -47,7 +58,10 @@ export const getMap = createAsyncThunk('general/getMap', async (mapId: string, {
 export const getPick = createAsyncThunk('general/getPick', async ({
                                                                       mapId,
                                                                       pickId
-                                                                  }: { mapId: string, pickId: string }, {dispatch, rejectWithValue}) => {
+                                                                  }: { mapId: string, pickId: string }, {
+                                                                      dispatch,
+                                                                      rejectWithValue
+                                                                  }) => {
     try {
         const response = await picksApi.getPick({mapId, pickId})
         dispatch(onPickLoad(response))
@@ -68,19 +82,17 @@ export const generalSlice = createSlice({
     name: 'general',
     initialState,
     reducers: {
-        onMapMove: (state, {payload}) => {
-            state.markerPosition.lat = payload?.lat
-            state.markerPosition.lng = payload?.lng
+        onMapZoom: (state, {payload}) => {
+            state.mapZoom = payload
+        },
+        onCurrentLocation: (state, {payload}) => {
+            state.currentUserPosition = payload
+        },
+        onPositionChange: (state, {payload}) => {
+            state.markerPosition = payload
         },
         onEdit: (state, {payload}) => {
             state.isEditView = payload
-        },
-        onMarkerDrag: (state, {payload}) => {
-            state.markerPosition = payload
-        },
-        onCurrentLocation: (state, {payload}) => {
-            state.currentUserPosition.lat = payload.lat
-            state.currentUserPosition.lng = payload.lng
         },
         onGeneralReset: (state) => {
             state.markerPosition = {
@@ -94,9 +106,11 @@ export const generalSlice = createSlice({
     extraReducers: builder => {
         builder.addCase(getMap.fulfilled, (state, {payload}) => {
             state.isLoading = false
-            state.markerPosition = {
-                lat: payload.lat,
-                lng: payload.lng
+            if (!state.markerPosition.lat && !state.markerPosition.lng) {
+                state.markerPosition = {
+                    lat: payload.lat,
+                    lng: payload.lng
+                }
             }
         })
             .addCase(getMap.pending, (state) => {
@@ -116,7 +130,13 @@ export const generalSlice = createSlice({
     }
 })
 
-export const {onMapMove, onEdit, onMarkerDrag, onCurrentLocation, onGeneralReset} = generalSlice.actions
+export const {
+    onMapZoom,
+    onEdit,
+    onCurrentLocation,
+    onGeneralReset,
+    onPositionChange
+} = generalSlice.actions
 export const selectGeneral = (state: { general: GeneralState }) => state.general
 
 export const generalActions = {

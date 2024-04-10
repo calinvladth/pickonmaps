@@ -1,31 +1,29 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {onPickReset, picksActions, PickState, selectPicks} from "../../slices/picksSlice";
+import {onPickReset, onPickSelect, picksActions, PickState, selectPicks} from "../../slices/picksSlice";
 import {Breadcrumb} from "antd";
-import {EVENT_CHANNELS, PATHS} from "../../utils/constants";
-import {generalActions, selectGeneral} from "../../slices/generalSlice";
+import {PATHS} from "../../utils/constants";
+import {generalActions, onPositionChange} from "../../slices/generalSlice";
 import replaceKeysInUrl from "../../utils/replace-keys-in-url";
 
 function Picks() {
     const {mapId} = useParams()
     const {picks, isLoading} = useSelector(selectPicks)
-    const {markerPosition} = useSelector(selectGeneral)
     const dispatch = useDispatch()
-    const channel = new BroadcastChannel(EVENT_CHANNELS.MOVE_TO_PICK)
 
     useEffect(() => {
-        if (!markerPosition.lat && !markerPosition.lng) {
-            dispatch(generalActions.getMap(mapId))
-        }
+        dispatch(generalActions.getMap(mapId))
         dispatch(picksActions.getPicks(mapId))
+
         return () => {
             dispatch(onPickReset())
         }
     }, [dispatch, mapId])
 
     function handleClick(pick: PickState) {
-        channel.postMessage({lat: pick.lat, lng: pick.lng})
+        dispatch(onPickSelect(pick))
+        dispatch(onPositionChange({lat: pick.lat, lng: pick.lng}))
     }
 
     if (isLoading) {

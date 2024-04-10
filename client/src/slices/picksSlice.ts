@@ -4,10 +4,12 @@ import {message} from "antd";
 import handleRequestErrors from "../utils/handleRequestErrors";
 
 export interface PickState {
-    id?: string
+    id?: string,
     category: string,
     name: string,
-    text: string
+    text: string,
+    lat?: number,
+    lng?: number
 }
 
 export interface PicksState {
@@ -101,7 +103,9 @@ export const picksSlice = createSlice({
         onPickLoad: (state, {payload}) => {
             state.pick = payload
         },
-        onPickReset: () => initialState
+        onPickReset: (state) => {
+            state.pick = initialState.pick
+        }
     },
     extraReducers: builder => {
         builder

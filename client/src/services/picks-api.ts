@@ -1,8 +1,9 @@
 import {PickState} from "../slices/picksSlice";
 import axios from "axios";
 import {API} from "../utils/constants";
+import {PositionInterface} from "../slices/generalSlice";
 
-async function getPick({mapId, pickId, token}: { mapId: string, pickId: string, token: string }): Promise<PickState> {
+async function getPick({mapId, pickId, token}: { mapId: string, pickId: string, token: string }): Promise<PickState & PositionInterface> {
     const response = await axios.get(`${API}/maps/${mapId}/picks/${pickId}`, {
         headers: {
             'Bearer': token

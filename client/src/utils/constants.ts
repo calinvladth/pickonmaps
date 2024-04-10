@@ -10,6 +10,8 @@ export const COLORS = {
     BLUE: 'blue'
 }
 
+export const MAP_ZOOM = 10
+
 export const EVENT_CHANNELS = {
     MOVE_TO_PICK: 'MOVE_TO_PICK',
     PICK_MODAL_EDIT: 'PICK_MODAL_EDIT',

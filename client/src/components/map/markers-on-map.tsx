@@ -1,17 +1,27 @@
 import {Marker, Popup} from "react-leaflet";
-import {onPickSelect, picksActions, PickState, selectPicks} from "../slices/picksSlice";
+import {onPickSelect, picksActions, PickState, selectPicks} from "../../slices/picksSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import {COLORS, ICON_SIZE} from "../utils/constants";
+import {COLORS, ICON_SIZE} from "../../utils/constants";
 import {Link, useParams} from "react-router-dom";
 import parse from "html-react-parser";
 import {Popconfirm} from "antd";
 import {useState} from "react";
+import L from "leaflet";
+import MARKER_ICON from "../../assets/icons/marker.svg";
+import {selectGeneral} from "../../slices/generalSlice";
+
+const ICON = new L.Icon({
+    iconUrl: MARKER_ICON,
+    iconRetinaUrl: MARKER_ICON,
+    iconSize: [35,45],
+});
 
 function MarkersOnMap() {
     const dispatch = useDispatch()
     const {mapId} = useParams()
-    const {picks, isDeleteLoading} = useSelector(selectPicks)
+    const {pick, picks, isDeleteLoading} = useSelector(selectPicks)
+    const {isEditView} = useSelector(selectGeneral)
     const [open, setOpen] = useState(false)
 
     function handleMarkerClicked(pick: PickState) {
@@ -22,24 +32,28 @@ function MarkersOnMap() {
         dispatch(picksActions.deletePick({pick, mapId, cb: () => setOpen(false)}))
     }
 
+    // TODO: Don't display markers on edit mode
+    // if (isEditView) {
+    //     return null
+    // }
+
     return <>
         {
-            picks.map(pick => <Marker eventHandlers={{
+            picks.map(obj => (pick.id === obj.id && isEditView) ? null  : <Marker eventHandlers={{
                 click: () => {
-                    handleMarkerClicked(pick)
+                    handleMarkerClicked(obj)
                 },
-            }} key={pick.id} position={[pick.lat, pick.lng] as [lat: number, lng: number]}>
-                {/*<Tooltip>{o.name}</Tooltip>*/}
+            }} key={obj.id} position={[obj.lat, obj.lng] as [lat: number, lng: number]} icon={ICON}>
                 <Popup>
                     <>
-                        {pick.name}
-                        <Link to={`${mapId}/picks/${pick.id}`}><EditOutlined
+                        {obj.name}
+                        <Link to={`${mapId}/picks/${obj.id}`}><EditOutlined
                             style={{fontSize: ICON_SIZE.SM, color: COLORS.ORANGE}}/></Link>
                         <Popconfirm
                             title="Delete the task"
                             description="Are you sure to delete this task?"
                             okButtonProps={{loading: isDeleteLoading}}
-                            onConfirm={() => handleDelete(pick)}
+                            onConfirm={() => handleDelete(obj)}
                             onCancel={() => setOpen(false)}
                             okText="Yes"
                             cancelText="No"
@@ -50,7 +64,7 @@ function MarkersOnMap() {
                         </Popconfirm>
                     </>
                     <hr/>
-                    {parse(pick.text || '')}
+                    {parse(obj.text || '')}
                 </Popup>
             </Marker>)
         }

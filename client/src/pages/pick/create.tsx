@@ -16,16 +16,12 @@ function CreatePick() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (!markerPosition.lat && !markerPosition.lng) {
-            dispatch(generalActions.getMap(mapId))
-        }
-
         dispatch(onEdit(true))
 
         return () => {
             dispatch(onEdit(false))
         }
-    }, [])
+    }, [dispatch])
 
     function handleSubmit() {
         dispatch(picksActions.savePick({

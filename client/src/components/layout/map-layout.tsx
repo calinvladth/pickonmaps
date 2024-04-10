@@ -1,9 +1,9 @@
 import {Col, ConfigProvider, Row} from "antd";
-import Map from "./map";
+import Map from "../map";
 import {Link, Outlet} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {selectUser} from "../slices/userSlice";
-import {PATHS} from "../utils/constants";
+import {selectUser} from "../../slices/userSlice";
+import {PATHS} from "../../utils/constants";
 
 function MapLayout() {
     const {email} = useSelector(selectUser)
