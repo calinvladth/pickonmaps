@@ -1,4 +1,4 @@
-import MapLayout from "./map-layout";
+import MapLayout from "./map-layout/map-layout";
 import AuthLayout from "./auth-layout";
 
 const Layout = {

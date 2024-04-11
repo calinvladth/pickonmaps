@@ -13,7 +13,6 @@ function SetCenterPosition() {
     }, [dispatch, map])
 
     const handleSearch = useCallback((data) => {
-        console.log('AAA: ', {lat: data.location?.y, lng: data.location?.x}, map.getCenter())
         dispatch(onPositionChange({lat: data.location?.y, lng: data.location?.x},))
     }, [dispatch, map])
 

@@ -6,8 +6,20 @@ import Layout from "./components/layout";
 import Middleware from "./pages/middleware";
 import {PATHS} from "./utils/constants";
 import User from "./pages/user";
+import {useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {selectUser, userActions} from "./slices/userSlice";
 
 function App() {
+    const {isAuthenticated} = useSelector(selectUser)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            dispatch(userActions.checkUser())
+        }
+    }, [dispatch])
+
     return (
         <Routes>
             <Route path={PATHS.SIGNIN} element={<Layout.AuthLayout/>}>

@@ -5,6 +5,7 @@ import axios from "axios";
 import {onMapReset} from "./mapsSlice";
 import {onPickReset} from "./picksSlice";
 import {onGeneralReset} from "./generalSlice";
+import handleRequestErrors from "../utils/handleRequestErrors";
 
 
 export interface UserState {
@@ -25,8 +26,7 @@ const initialState: UserState = {
 
 export const signIn = createAsyncThunk('user/signIn', async (user: UserInterface, {rejectWithValue}) => {
     try {
-        const response = await authApi.signIn(user)
-        return response
+        return await authApi.signIn(user)
     } catch (err) {
         if (axios.isAxiosError(err)) {
             return rejectWithValue(err.response?.data)
@@ -37,8 +37,7 @@ export const signIn = createAsyncThunk('user/signIn', async (user: UserInterface
 
 export const signUp = createAsyncThunk('user/signUp', async (user: UserInterface, {rejectWithValue}) => {
     try {
-        const response = await authApi.signUp(user)
-        return response
+        return await authApi.signUp(user)
     } catch (err) {
         if (axios.isAxiosError(err)) {
             return rejectWithValue(err.response?.data)
@@ -52,6 +51,18 @@ export const signOut = createAsyncThunk('user/signOut', async (_, {dispatch}) =>
     dispatch(onGeneralReset())
     dispatch(onMapReset())
     dispatch(onPickReset())
+})
+
+export const checkUser = createAsyncThunk('user/check', async (_, {getState, dispatch, rejectWithValue}) => {
+    try {
+        const {user} = getState()
+        await authApi.checkUser(user.token)
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            dispatch(userActions.signOut())
+            return rejectWithValue(handleRequestErrors(err))
+        }
+    }
 })
 
 export const userSlice = createSlice({
@@ -90,6 +101,17 @@ export const userSlice = createSlice({
                 state.isAuthenticated = false
                 message.error(payload as string)
             })
+
+        builder.addCase(checkUser.fulfilled, (state, {payload}) => {
+            state.isLoading = false
+        })
+            .addCase(checkUser.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(checkUser.rejected, (state, {payload}) => {
+                state.isLoading = false
+                message.error(payload as string)
+            })
     }
 })
 
@@ -97,8 +119,10 @@ export const {onUserReset} = userSlice.actions
 export const selectUser = (state: { user: UserState }) => state.user
 
 export const userActions = {
+    checkUser,
     signIn,
-    signUp
+    signUp,
+    signOut
 }
 
 export default userSlice.reducer
