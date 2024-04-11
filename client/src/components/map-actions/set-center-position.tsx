@@ -10,15 +10,22 @@ function SetCenterPosition() {
 
     const onMove = useCallback(() => {
         dispatch(onPositionChange(map.getCenter()))
-    }, [map])
+    }, [dispatch, map])
+
+    const handleSearch = useCallback((data) => {
+        console.log('AAA: ', {lat: data.location?.y, lng: data.location?.x}, map.getCenter())
+        dispatch(onPositionChange({lat: data.location?.y, lng: data.location?.x},))
+    }, [dispatch, map])
 
     useEffect(() => {
         if (!isEditView) {
             map.on('dragend', onMove)
         }
+        map.on('geosearch/showlocation', handleSearch)
 
         return () => {
             map.off('dragend', onMove)
+            map.off('geosearch/showlocation', handleSearch)
         }
     }, [isEditView, map, onMove])
 

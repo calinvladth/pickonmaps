@@ -22,7 +22,7 @@ function PickView() {
         return () => {
             dispatch(onEdit(false))
         }
-    }, [])
+    }, [dispatch, mapId, pickId])
 
     function handleSubmit() {
         dispatch(picksActions.savePick({

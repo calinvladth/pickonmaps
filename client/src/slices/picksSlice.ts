@@ -104,6 +104,7 @@ export const picksSlice = createSlice({
             state.pick = payload
         },
         onPickReset: (state) => {
+            state.picks = []
             state.pick = initialState.pick
         }
     },

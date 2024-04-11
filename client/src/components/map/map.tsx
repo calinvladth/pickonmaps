@@ -6,9 +6,11 @@ import handleMapDefaultPosition from "../../utils/handleMapDefaultPosition";
 import MarkersOnMap from "./markers-on-map";
 import {LatLngExpression} from "leaflet";
 import CurrentLocation from "./current-location";
+import {OpenStreetMapProvider} from "leaflet-geosearch";
 
 function Map() {
     const {isLoading, markerPosition, currentUserPosition, mapZoom} = useSelector(selectGeneral)
+
 
     if (isLoading) {
         return <p>Map loading ...</p>
@@ -25,6 +27,7 @@ function Map() {
         <CurrentLocation/>
         <MarkersOnMap/>
 
+        <MapActions.Search />
         <MapActions.SetCenterPosition/>
         <MapActions.WatchPosition/>
         <MapActions.WatchZoom/>

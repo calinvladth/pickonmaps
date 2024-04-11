@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {onMapEdit, saveMap, selectMaps} from "../../slices/mapsSlice";
 import {useEffect} from "react";
-import {generalActions, selectGeneral} from "../../slices/generalSlice";
+import {onEdit, selectGeneral} from "../../slices/generalSlice";
 import {PATHS} from "../../utils/constants";
 
 function MapCreate() {
@@ -13,9 +13,9 @@ function MapCreate() {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(generalActions.onCreate(true))
+        dispatch(onEdit(true))
         return () => {
-            dispatch(generalActions.onCreate(false))
+            dispatch(onEdit(false))
         }
     }, [dispatch])
 

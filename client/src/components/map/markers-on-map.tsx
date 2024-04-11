@@ -25,7 +25,9 @@ function MarkersOnMap() {
     const [open, setOpen] = useState(false)
 
     function handleMarkerClicked(pick: PickState) {
-        dispatch(onPickSelect(pick))
+        if (!isEditView) {
+            dispatch(onPickSelect(pick))
+        }
     }
 
     function handleDelete(pick: PickState) {

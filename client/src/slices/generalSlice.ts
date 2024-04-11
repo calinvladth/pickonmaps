@@ -73,12 +73,6 @@ export const getPick = createAsyncThunk('general/getPick', async ({
 
 })
 
-export const onCreate = createAsyncThunk('general/onCreate', async (isEditView: boolean, {dispatch}) => {
-    dispatch(onEdit(isEditView))
-    dispatch(onMapReset())
-    dispatch(onPickReset())
-})
-
 export const generalSlice = createSlice({
     name: 'general',
     initialState,
@@ -96,10 +90,6 @@ export const generalSlice = createSlice({
             state.isEditView = payload
         },
         onGeneralReset: (state) => {
-            state.markerPosition = {
-                lat: 0,
-                lng: 0
-            }
             state.isEditView = false
             state.isMapLoading = false
         }
@@ -145,7 +135,6 @@ export const selectGeneral = (state: { general: GeneralState }) => state.general
 export const generalActions = {
     getMap,
     getPick,
-    onCreate
 }
 
 export default generalSlice.reducer
