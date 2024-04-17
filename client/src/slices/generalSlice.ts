@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {mapsApi} from "../services/maps-api";
-import {onMapLoad, onMapReset} from "./mapsSlice";
-import {onPickLoad, onPickReset} from "./picksSlice";
+import {onMapLoad} from "./mapsSlice";
+import {getPicks, onPickLoad} from "./picksSlice";
 import {picksApi} from "../services/picks-api";
 import handleRequestErrors from "../utils/handleRequestErrors";
 import {MAP_ZOOM} from "../utils/constants";
@@ -18,7 +18,8 @@ export interface GeneralState {
     isLoading: boolean,
     isEditView: boolean,
     isMapLoading: boolean,
-    isPickLoading: boolean
+    isPickLoading: boolean,
+    hasError: boolean
 }
 
 const initialState: GeneralState = {
@@ -34,7 +35,8 @@ const initialState: GeneralState = {
     isLoading: false,
     isEditView: false,
     isMapLoading: false,
-    isPickLoading: false
+    isPickLoading: false,
+    hasError: false
 }
 
 // TODO: Move to maps
@@ -47,6 +49,7 @@ export const getMap = createAsyncThunk('general/getMap', async (mapId: string, {
         const {user, maps} = getState()
         const response = await mapsApi.getMap({mapId, token: user.token})
         dispatch(onMapLoad(response))
+        dispatch(getPicks(mapId))
 
         return {data: response, map: maps.map}
     } catch (err) {
@@ -99,15 +102,20 @@ export const generalSlice = createSlice({
             const {data, map} = payload
             state.isLoading = false
 
-            if (!map.id) {
+            // if (!map.id) {
                 state.markerPosition = {
                     lat: data.lat,
                     lng: data.lng
                 }
-            }
+            // }
         })
             .addCase(getMap.pending, (state) => {
                 state.isLoading = true
+                state.hasError = false
+            })
+            .addCase(getMap.rejected, (state) => {
+                state.isLoading = false
+                state.hasError = true
             })
 
         builder.addCase(getPick.fulfilled, (state, {payload}) => {
@@ -119,6 +127,11 @@ export const generalSlice = createSlice({
         })
             .addCase(getPick.pending, (state) => {
                 state.isLoading = true
+                state.hasError = false
+            })
+            .addCase(getPick.rejected, (state) => {
+                state.isLoading = false
+                state.hasError = true
             })
     }
 })

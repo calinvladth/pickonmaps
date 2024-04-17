@@ -2,7 +2,7 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import {generalActions, onEdit, selectGeneral} from "../../slices/generalSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {Breadcrumb, Button, Input, Space} from "antd";
+import {Breadcrumb, Button, Checkbox, Input, Space} from "antd";
 import {onMapEdit, saveMap, selectMaps} from "../../slices/mapsSlice";
 import replaceKeysInUrl from "../../utils/replace-keys-in-url";
 import {PATHS} from "../../utils/constants";
@@ -48,6 +48,10 @@ function MapEdit() {
                    onChange={e => dispatch(onMapEdit({
                        name: e.target.value
                    }))}/>
+
+            <Checkbox checked={map.is_public} onChange={e => dispatch(onMapEdit({
+                is_public: e.target.checked
+            }))}>Is Public</Checkbox>
             <Button onClick={handleSubmit}>Submit</Button>
         </Space>
     </>

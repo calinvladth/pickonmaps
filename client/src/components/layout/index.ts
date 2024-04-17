@@ -1,9 +1,9 @@
-import MapLayout from "./map-layout/map-layout";
+import MapLayout from "./map-layout";
 import AuthLayout from "./auth-layout";
+import MapShareLayout from "./map-share-layout";
 
-const Layout = {
+export const Layout = {
     MapLayout,
-    AuthLayout
+    AuthLayout,
+    MapShareLayout
 }
-
-export default Layout

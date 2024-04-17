@@ -2,10 +2,12 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {message} from "antd";
 import {mapsApi} from "../services/maps-api";
 import handleRequestErrors from "../utils/handleRequestErrors";
+import {onPickReset} from "./picksSlice";
 
 export interface MapState {
     id?: string
-    name: string
+    name: string,
+    is_public: boolean
 }
 
 export interface MapsState {
@@ -28,9 +30,10 @@ const initialState: MapsState = {
     }
 }
 
-export const getMaps = createAsyncThunk('map/getMaps', async (_, {getState, rejectWithValue}) => {
+export const getMaps = createAsyncThunk('map/getMaps', async (_, {getState, dispatch, rejectWithValue}) => {
     try {
         const {user} = getState()
+        dispatch(onPickReset())
         return await mapsApi.getMaps(user.token)
     } catch (err) {
         return rejectWithValue(handleRequestErrors(err))

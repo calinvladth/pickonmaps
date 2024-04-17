@@ -1,14 +1,15 @@
 import 'leaflet/dist/leaflet.css'
 import {Route, Routes} from "react-router-dom";
-import Maps from "./pages/maps";
-import Picks from "./pages/picks";
-import Layout from "./components/layout";
-import Middleware from "./pages/middleware";
 import {PATHS} from "./utils/constants";
-import User from "./pages/user";
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUser, userActions} from "./slices/userSlice";
+import MapShareLayout from "./components/layout/map-share-layout/map-share-layout";
+import {Layout} from "./components/layout";
+import {Maps} from './pages/maps'
+import {User} from "./pages/user";
+import {Middleware} from "./pages/middleware";
+import {Picks} from "./pages/picks";
 
 function App() {
     const {isAuthenticated} = useSelector(selectUser)
@@ -18,7 +19,7 @@ function App() {
         if (isAuthenticated) {
             dispatch(userActions.checkUser())
         }
-    }, [dispatch])
+    }, [dispatch, isAuthenticated])
 
     return (
         <Routes>
@@ -26,6 +27,11 @@ function App() {
                 <Route index element={<User.SignIn/>}/>
                 <Route path={PATHS.SIGNUP} element={<User.SignUp/>}/>
             </Route>
+
+            <Route path={PATHS.MAP_SHARE} element={<Layout.MapShareLayout/>}>
+                <Route index element={<Maps.MapShare/>}/>
+            </Route>
+
             <Route path={PATHS.MAPS_VIEW}
                    element={<Middleware.RequireAuth><Layout.MapLayout/></Middleware.RequireAuth>}>
                 <Route index element={<Maps.MapsView/>}/>
@@ -35,6 +41,7 @@ function App() {
                 <Route path={PATHS.PICKS_CREATE} element={<Picks.PickCreate/>}/>
                 <Route path={PATHS.PICK_VIEW} element={<Picks.PickView/>}/>
             </Route>
+
             <Route path={PATHS.ACCOUNT} element={<Middleware.RequireAuth><Layout.MapLayout/></Middleware.RequireAuth>}>
                 <Route index element={<User.UserProfile/>}/>
             </Route>

@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Col, ConfigProvider, Flex, Row} from "antd";
+import {ConfigProvider, Flex} from "antd";
 import {Outlet, useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {selectUser} from "../../slices/userSlice";

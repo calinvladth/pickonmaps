@@ -1,7 +1,5 @@
 import RequireAuth from "./require-auth";
 
-const Middleware = {
+export const Middleware = {
     RequireAuth
 }
-
-export default Middleware

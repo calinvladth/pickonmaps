@@ -27,11 +27,9 @@ const Avatar = styled.div`
   right: 25px;
 `
 
-const Style = {
+export const Style = {
     Container,
     Component,
     Content,
     Avatar
 }
-
-export default Style

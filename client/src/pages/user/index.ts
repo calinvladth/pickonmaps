@@ -2,10 +2,8 @@ import SignIn from "./signin";
 import SignUp from "./signup";
 import UserProfile from "./user-profile";
 
-const User = {
+export const User = {
     SignIn,
     SignUp,
     UserProfile
 }
-
-export default User

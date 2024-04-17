@@ -1,12 +1,11 @@
 import {MapContainer, TileLayer} from 'react-leaflet'
 import {useSelector} from "react-redux";
-import MapActions from "../map-actions";
+import {MapActions} from "../map-actions";
 import {selectGeneral} from "../../slices/generalSlice";
 import handleMapDefaultPosition from "../../utils/handleMapDefaultPosition";
 import MarkersOnMap from "./markers-on-map";
 import {LatLngExpression} from "leaflet";
 import CurrentLocation from "./current-location";
-import {OpenStreetMapProvider} from "leaflet-geosearch";
 
 function Map() {
     const {isLoading, markerPosition, currentUserPosition, mapZoom} = useSelector(selectGeneral)

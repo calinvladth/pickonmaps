@@ -4,12 +4,10 @@ import WatchPosition from "./watch-position";
 import WatchZoom from "./watch-zoom";
 import Search from "./search";
 
-const MapActions = {
+export const MapActions = {
   MarkerDrag,
   SetCenterPosition,
   WatchPosition,
   WatchZoom,
   Search
 }
-
-export default MapActions

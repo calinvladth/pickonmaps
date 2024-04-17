@@ -52,7 +52,6 @@ export const getPicks = createAsyncThunk('pick/getPicks', async (mapId: string, 
     } catch (err) {
         return rejectWithValue(handleRequestErrors(err))
     }
-
 })
 
 export const savePick = createAsyncThunk('pick/savePick', async ({

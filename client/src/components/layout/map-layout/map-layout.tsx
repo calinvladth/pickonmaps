@@ -1,10 +1,10 @@
 import {Avatar, Col, ConfigProvider, Dropdown, MenuProps, Row} from "antd";
 import Map from "../../map";
-import {Link, Outlet, useNavigate} from "react-router-dom";
+import {Link, Outlet} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUser, signOut} from "../../../slices/userSlice";
 import {PATHS} from "../../../utils/constants";
-import Style from './map-layout.styled'
+import {Style} from './map-layout.styled'
 import {UserOutlined} from "@ant-design/icons";
 
 
